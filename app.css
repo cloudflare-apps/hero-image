@@ -1,0 +1,40 @@
+.eager-headline {
+  background-size: cover;
+  color: #fff;
+  cursor: pointer;
+  display: block;
+  height: 100vh;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  width: 100vw;
+}
+
+.eager-headline eager-message {
+  display: block;
+  padding: 0 1em;
+}
+
+.eager-headline eager-message > * {
+  color: inherit;
+}
+
+
+.eager-headline .eager-caret {
+  bottom: 1em;
+  display: block;
+  opacity: 0.5;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+}
+
+.eager-headline .eager-caret > svg {
+  display: inline;
+  height: 1.6em;
+  width: 1.6em;
+}

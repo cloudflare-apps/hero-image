@@ -1,0 +1,87 @@
+{
+  "resources": {
+    "head": [
+      {
+        "src": "app.css",
+        "type": "style"
+      },
+      {
+        "type": "script",
+        "src": "./build/app.js"
+      }
+    ]
+  },
+  "preview": {
+    "handlers": [
+      {
+        "options": ["*"],
+        "execute": "INSTALL_SCOPE.setOptions(INSTALL_OPTIONS)"
+      }
+    ]
+  },
+  "options": {
+    "properties": {
+      "message": {
+        "default": "# Greetings, user!\nThe Headline will be as tall as the user's screen.\nTry resizing your browser!",
+        "description": "Formatted with <a target='_blank' href='https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet'>Markdown</a>.",
+        "placeholder": "Your headline",
+        "title": "Headline content",
+        "order": 1,
+        "type": "object",
+        "format": "markdown"
+      },
+      "backgroundColor": {
+        "default": "#0099ff",
+        "title": "Background color",
+        "order": 2,
+        "type": "string",
+        "format": "color"
+      },
+      "textColor": {
+        "default": "#ffffff",
+        "title": "Text color",
+        "order": 3,
+        "type": "string",
+        "format": "color"
+      },
+      "textShadowColor": {
+        "default": "#333333",
+        "title": "Text shadow color",
+        "order": 4,
+        "type": "string",
+        "format": "color"
+      },
+      "useBackgroundImage": {
+        "title": "Use background image",
+        "order": 5,
+        "type": "boolean"
+      },
+      "backgroundImage": {
+        "title": "Background image",
+        "order": 6,
+        "type": "string",
+        "showIf": "useBackgroundImage",
+        "format": "image"
+      },
+      "showAdvanced": {
+        "title": "Show advanced options",
+        "order": 6,
+        "type": "boolean"
+      },
+
+      "location": {
+        "showIf": "showAdvanced",
+        "title": "Headline location",
+        "description": "Where should the Headline appear on the page?",
+        "order": 7,
+        "type": "object",
+        "format": "element",
+        "default": {
+          "selector": "body",
+          "method": "prepend"
+        }
+      }
+    }
+  }
+}
+
