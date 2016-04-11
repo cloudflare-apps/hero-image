@@ -1,7 +1,8 @@
 "use strict";
 
 (function () {
-  var CONTAINER_CLASS = "eager-headline";
+  var BACKGROUND_IMAGE = "https://eager-app-images.imgix.net/lturyv6bQ0KLnXdnNLCi_life.jpg";
+  var CONTAINER_CLASS = "eager-hero-image";
   var caret = document.createElement("div");
 
   caret.classList.add("eager-caret");
@@ -62,15 +63,12 @@
   function updateElement() {
     container = Eager.createElement(options.location, container);
     container.classList.add(CONTAINER_CLASS);
-
-    var backgroundImage = options.useBackgroundImage ? "url(" + options.backgroundImage + ")" : "";
-    var textShadow = options.textShadowColor ? "1px 1px 3px " + options.textShadowColor : "";
+    container.setAttribute("data-alignment", options.alignment);
 
     Object.assign(container.style, {
-      backgroundColor: options.backgroundColor,
-      backgroundImage: backgroundImage,
+      backgroundImage: "url(" + (options.backgroundImage || BACKGROUND_IMAGE) + ")",
       color: options.textColor,
-      textShadow: textShadow
+      textShadow: options.textShadowColor ? "1px 1px 3px " + options.textShadowColor : ""
     });
 
     caret.firstChild.style.fill = options.textColor;

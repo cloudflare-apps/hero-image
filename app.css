@@ -1,4 +1,4 @@
-.eager-headline {
+.eager-hero-image {
   background-size: cover;
   color: #fff;
   cursor: pointer;
@@ -14,17 +14,29 @@
   width: 100vw;
 }
 
-.eager-headline eager-message {
+.eager-hero-image[data-alignment="left"] {
+  text-align: left;
+}
+
+.eager-hero-image[data-alignment="center"] {
+  text-align: center;
+}
+
+.eager-hero-image[data-alignment="right"] {
+  text-align: right;
+}
+
+.eager-hero-image eager-message {
   display: block;
   padding: 0 1em;
 }
 
-.eager-headline eager-message > * {
+.eager-hero-image eager-message > * {
   color: inherit;
 }
 
 
-.eager-headline .eager-caret {
+.eager-hero-image .eager-caret {
   bottom: 1em;
   display: block;
   opacity: 0.5;
@@ -33,7 +45,7 @@
   width: 100%;
 }
 
-.eager-headline .eager-caret > svg {
+.eager-hero-image .eager-caret > svg {
   display: inline;
   height: 1.6em;
   width: 1.6em;

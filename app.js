@@ -1,5 +1,6 @@
 (function () {
-  const CONTAINER_CLASS = "eager-headline"
+  const BACKGROUND_IMAGE = "https://eager-app-images.imgix.net/lturyv6bQ0KLnXdnNLCi_life.jpg"
+  const CONTAINER_CLASS = "eager-hero-image"
   const caret = document.createElement("div")
 
   caret.classList.add("eager-caret")
@@ -58,15 +59,12 @@
   function updateElement() {
     container = Eager.createElement(options.location, container)
     container.classList.add(CONTAINER_CLASS)
-
-    const backgroundImage = options.useBackgroundImage ? `url(${options.backgroundImage})` : ""
-    const textShadow = options.textShadowColor ? `1px 1px 3px ${options.textShadowColor}` : ""
+    container.setAttribute("data-alignment", options.alignment)
 
     Object.assign(container.style, {
-      backgroundColor: options.backgroundColor,
-      backgroundImage,
+      backgroundImage: `url(${options.backgroundImage || BACKGROUND_IMAGE})`,
       color: options.textColor,
-      textShadow
+      textShadow: options.textShadowColor ? `1px 1px 3px ${options.textShadowColor}` : ""
     })
 
     caret.firstChild.style.fill = options.textColor

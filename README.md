@@ -1,4 +1,4 @@
-# Headline
+# Hero Image
 
 _Delight visitors with beautiful full screen visuals._
 

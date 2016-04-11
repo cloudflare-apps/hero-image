@@ -21,22 +21,24 @@
   },
   "options": {
     "properties": {
+      "backgroundImage": {
+        "description": "This image will resize to fit the screen.",
+        "title": "Background image",
+        "order": 0,
+        "type": "string",
+        "format": "image"
+      },
+
       "message": {
-        "default": "# Greetings, user!\nThe Headline will be as tall as the user's screen.\nTry resizing your browser!",
-        "description": "Formatted with <a target='_blank' href='https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet'>Markdown</a>.",
-        "placeholder": "Your headline",
-        "title": "Headline content",
+        "default": "# First impressions in full screen.\nA summary of your content to encourage visitors to read on.",
+        "description": "A summary of your content formatted with <a target='_blank' href='https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet'>Markdown</a>.",
+        "placeholder": "Your hero Image",
+        "title": "Message",
         "order": 1,
         "type": "object",
         "format": "markdown"
       },
-      "backgroundColor": {
-        "default": "#0099ff",
-        "title": "Background color",
-        "order": 2,
-        "type": "string",
-        "format": "color"
-      },
+
       "textColor": {
         "default": "#ffffff",
         "title": "Text color",
@@ -44,6 +46,7 @@
         "type": "string",
         "format": "color"
       },
+
       "textShadowColor": {
         "default": "#333333",
         "title": "Text shadow color",
@@ -51,18 +54,24 @@
         "type": "string",
         "format": "color"
       },
-      "useBackgroundImage": {
-        "title": "Use background image",
-        "order": 5,
-        "type": "boolean"
-      },
-      "backgroundImage": {
-        "title": "Background image",
-        "order": 6,
+
+      "alignment": {
+        "title": "Text alignment",
         "type": "string",
-        "showIf": "useBackgroundImage",
-        "format": "image"
+        "order": 5,
+        "default": "left",
+        "enum": [
+          "left",
+          "center",
+          "right"
+        ],
+        "enumNames": {
+          "left": "Left",
+          "center": "Center",
+          "right": "Right"
+        }
       },
+
       "showAdvanced": {
         "title": "Show advanced options",
         "order": 6,
@@ -71,8 +80,8 @@
 
       "location": {
         "showIf": "showAdvanced",
-        "title": "Headline location",
-        "description": "Where should the Headline appear on the page?",
+        "title": "Hero Image location",
+        "description": "Where should the Hero Image appear on the page?",
         "order": 7,
         "type": "object",
         "format": "element",

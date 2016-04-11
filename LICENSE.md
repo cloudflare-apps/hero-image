@@ -1,4 +1,4 @@
-# Headline
+# Hero Image
 
 The MIT License (MIT)
 
