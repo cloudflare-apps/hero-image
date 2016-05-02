@@ -1,9 +1,10 @@
 (function () {
+  if (!window.addEventListener) return // Check for IE9+
+
   const BACKGROUND_IMAGE = "https://eager-app-images.imgix.net/lturyv6bQ0KLnXdnNLCi_life.jpg"
-  const CONTAINER_CLASS = "eager-hero-image"
   const caret = document.createElement("div")
 
-  caret.classList.add("eager-caret")
+  caret.className = "eager-caret"
   caret.innerHTML = `<svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
     <path d="M1683 808l-742 741q-19 19-45 19t-45-19l-742-741q-19-19-19-45.5t19-45.5l166-165q19-19 45-19t45 19l531 531 531-531q19-19 45-19t45 19l166 165q19 19 19 45.5t-19 45.5z"/>
   </svg>`
@@ -21,8 +22,7 @@
     return -delta / 2 * (time * (time - 2) - 1) + value
   }
 
-  function scrollToTop(options) {
-    const {element, duration = 600, finalY = 0} = options
+  function scrollToTop({element, duration = 600, finalY = 0}) {
     const initialY = element.scrollTop
     const delta = finalY - initialY
     const increment = 20
@@ -42,7 +42,7 @@
         element.scrollTop = easeInOutQuad(currentTime, initialY, delta, duration)
       }
 
-      if (element.scrollTop < finalY) setTimeout(animateScroll, increment)
+      if (element.scrollTop < finalY) window.setTimeout(animateScroll, increment)
     }
 
     animateScroll()
@@ -58,14 +58,12 @@
 
   function updateElement() {
     container = Eager.createElement(options.location, container)
-    container.classList.add(CONTAINER_CLASS)
+    container.className = "eager-hero-image"
     container.setAttribute("data-alignment", options.alignment)
 
-    Object.assign(container.style, {
-      backgroundImage: `url(${options.backgroundImage || BACKGROUND_IMAGE})`,
-      color: options.textColor,
-      textShadow: options.textShadowColor ? `1px 1px 3px ${options.textShadowColor}` : ""
-    })
+    container.style.backgroundImage = `url(${options.backgroundImage || BACKGROUND_IMAGE})`
+    container.style.color = options.textColor
+    container.style.textShadow = options.textShadowColor ? `1px 1px 3px ${options.textShadowColor}` : ""
 
     caret.firstChild.style.fill = options.textColor
 
@@ -94,7 +92,7 @@
     window.addEventListener("resize", centerMessage)
   }
 
-  INSTALL_SCOPE = {
+  window.INSTALL_SCOPE = {
     setOptions(nextOptions) {
       options = nextOptions
 
