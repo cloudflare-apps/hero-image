@@ -14,8 +14,12 @@
   "preview": {
     "handlers": [
       {
-        "options": ["*"],
-        "execute": "INSTALL_SCOPE.setOptions(INSTALL_OPTIONS)"
+        "options": ["textColor", "textShadowColor", "alignment", "message"],
+        "execute": "INSTALL_SCOPE.updateInnerContent(INSTALL_OPTIONS)"
+      },
+      {
+        "options": ["backgroundImage", "location"],
+        "execute": "INSTALL_SCOPE.updateElement(INSTALL_OPTIONS)"
       }
     ]
   },
@@ -33,7 +37,7 @@
       "message": {
         "default": "# First impressions in full screen.\nA summary of your content to encourage visitors to read on.",
         "description": "A summary of your content formatted with <a target='_blank' href='https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet'>Markdown</a>.",
-        "placeholder": "Your hero Image",
+        "placeholder": "Your hero summary...",
         "title": "Message",
         "order": 1,
         "type": "object",
@@ -45,7 +49,8 @@
         "title": "Text color",
         "order": 3,
         "type": "string",
-        "format": "color"
+        "format": "color",
+        "placeholder": "#..."
       },
 
       "textShadowColor": {
@@ -90,8 +95,8 @@
 
       "location": {
         "showIf": "showAdvanced",
-        "title": "Hero Image location",
-        "description": "Where should the Hero Image appear on the page?",
+        "title": "Hero Image parent element",
+        "description": "Where element should contain the Hero Image?",
         "order": 7,
         "type": "object",
         "format": "element",

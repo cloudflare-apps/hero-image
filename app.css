@@ -5,13 +5,20 @@
   display: block;
   height: 100vh;
   left: 0;
+  opacity: 0;
   overflow: hidden;
   position: absolute;
   top: 0;
+  transition: 300ms opacity linear;
   -moz-user-select: none;
   -webkit-user-select: none;
   user-select: none;
   width: 100vw;
+  z-index: 10;
+}
+
+.eager-hero-image[data-state="loaded"] {
+  opacity: 1;
 }
 
 .eager-hero-image[data-alignment="left"] {
@@ -31,12 +38,17 @@
   padding: 0 1em;
 }
 
+.eager-hero-image eager-message > *:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
 .eager-hero-image eager-message > * {
   color: inherit;
 }
 
 
-.eager-hero-image .eager-caret {
+.eager-hero-image eager-caret {
   bottom: 1em;
   display: block;
   opacity: 0.5;
@@ -45,7 +57,7 @@
   width: 100%;
 }
 
-.eager-hero-image .eager-caret > svg {
+.eager-hero-image eager-caret > svg {
   display: inline;
   height: 1.6em;
   width: 1.6em;
