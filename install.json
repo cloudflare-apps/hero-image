@@ -22,6 +22,7 @@
   "options": {
     "properties": {
       "backgroundImage": {
+        "default": "https://eager-app-images.imgix.net/lturyv6bQ0KLnXdnNLCi_life.jpg",
         "description": "This image will resize to fit the screen.",
         "title": "Background image",
         "order": 0,
@@ -48,11 +49,20 @@
       },
 
       "textShadowColor": {
-        "default": "#333333",
+        "enum": [
+          "dark",
+          "light",
+          "none"
+        ],
+        "enumNames": {
+          "dark": "Dark",
+          "light": "Light",
+          "none": "None"
+        },
+        "default": "dark",
         "title": "Text shadow color",
         "order": 4,
-        "type": "string",
-        "format": "color"
+        "type": "string"
       },
 
       "alignment": {

@@ -1,8 +1,12 @@
 (function () {
   if (!window.addEventListener) return // Check for IE9+
 
-  const BACKGROUND_IMAGE = "https://eager-app-images.imgix.net/lturyv6bQ0KLnXdnNLCi_life.jpg"
   const caret = document.createElement("div")
+  const TEXT_SHADOWS = {
+    dark: "#333333",
+    light: "#efefef",
+    none: "transparent"
+  }
 
   caret.className = "eager-caret"
   caret.innerHTML = `<svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
@@ -61,9 +65,9 @@
     container.className = "eager-hero-image"
     container.setAttribute("data-alignment", options.alignment)
 
-    container.style.backgroundImage = `url(${options.backgroundImage || BACKGROUND_IMAGE})`
+    container.style.backgroundImage = options.backgroundImage ? `url("${options.backgroundImage}")` : ""
     container.style.color = options.textColor
-    container.style.textShadow = options.textShadowColor ? `1px 1px 3px ${options.textShadowColor}` : ""
+    container.style.textShadow = `1px 1px 3px ${TEXT_SHADOWS[options.textShadowColor]}`
 
     caret.firstChild.style.fill = options.textColor
 
