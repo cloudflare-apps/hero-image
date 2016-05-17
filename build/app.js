@@ -109,19 +109,16 @@
     var prefetchImage = document.createElement("img");
 
     if (!backgroundImage) {
-      console.log("no backgroundImage");
       container.style.backgroundImage = "";
       onComplete();
       return;
     }
 
     prefetchImage.onload = function () {
-      console.log("loaded image");
       container.style.backgroundImage = "url(\"" + backgroundImage + "\")";
       onComplete();
     };
 
-    console.log("loading image");
     prefetchImage.onerror = onComplete;
     prefetchImage.src = backgroundImage;
   }
