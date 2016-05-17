@@ -9,6 +9,8 @@
         "type": "script",
         "src": "./build/app.js"
       }
+    ],
+    "body": [
     ]
   },
   "preview": {
@@ -18,7 +20,11 @@
         "execute": "INSTALL_SCOPE.updateInnerContent(INSTALL_OPTIONS)"
       },
       {
-        "options": ["backgroundImage", "location"],
+        "options": ["backgroundImage"],
+        "execute": "INSTALL_SCOPE.updateBackground(INSTALL_OPTIONS)"
+      },
+      {
+        "options": ["location"],
         "execute": "INSTALL_SCOPE.updateElement(INSTALL_OPTIONS)"
       }
     ]
@@ -96,7 +102,7 @@
       "location": {
         "showIf": "showAdvanced",
         "title": "Hero Image parent element",
-        "description": "Where element should contain the Hero Image?",
+        "description": "The element containing the Hero Image.",
         "order": 7,
         "type": "object",
         "format": "element",

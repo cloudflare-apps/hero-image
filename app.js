@@ -1,13 +1,15 @@
 (function () {
   if (!window.addEventListener) return // Check for IE9+
 
-  const message = document.createElement("eager-message")
-  const caret = document.createElement("eager-caret")
+  const STATE_ATTRIBUTE = "data-hero-state"
   const TEXT_SHADOWS = {
     dark: "#333333",
     light: "#efefef",
     none: "transparent"
   }
+  const mask = document.createElement("eager-hero-mask")
+  const message = document.createElement("eager-message")
+  const caret = document.createElement("eager-caret")
 
   caret.innerHTML = `<svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
     <path d="M1683 808l-742 741q-19 19-45 19t-45-19l-742-741q-19-19-19-45.5t19-45.5l166-165q19-19 45-19t45 19l531 531 531-531q19-19 45-19t45 19l166 165q19 19 19 45.5t-19 45.5z"/>
@@ -75,8 +77,42 @@
     caret.firstChild.style.fill = options.textColor
   }
 
-  function updateElement() {
+  function updateViewport() {
+    const parent = document.querySelector(options.location.selector)
+    const {paddingBottom, paddingTop} = document.defaultView.getComputedStyle(parent)
+    let viewportCompensation = 0
+
+    if (parent.clientHeight < document.documentElement.clientHeight) {
+      viewportCompensation = document.documentElement.clientHeight - parent.clientHeight
+    }
+
+    parent.style.paddingBottom = `calc(${paddingBottom} + ${viewportCompensation}px)`
+    parent.style.paddingTop = `calc(100vh + ${paddingTop})`
+  }
+
+  function updateBackground(onComplete = () => {}) {
     const {backgroundImage} = options
+    const prefetchImage = document.createElement("img")
+
+    if (!backgroundImage) {
+      console.log("no backgroundImage")
+      container.style.backgroundImage = ""
+      onComplete()
+      return
+    }
+
+    prefetchImage.onload = () => {
+      console.log("loaded image")
+      container.style.backgroundImage = `url("${backgroundImage}")`
+      onComplete()
+    }
+
+    console.log("loading image")
+    prefetchImage.onerror = onComplete
+    prefetchImage.src = backgroundImage
+  }
+
+  function updateElement() {
     const parent = document.querySelector(options.location.selector)
 
     container = Eager.createElement(options.location, container)
@@ -92,42 +128,43 @@
     container.appendChild(message)
     container.appendChild(caret)
 
-    const initialPaddingTop = parent.style.paddingTop || "0px"
-    const initialPaddingBottom = parent.style.paddingBottom || "0px"
-    let viewportCompensation = 0
-
-    if (document.body.clientHeight < document.documentElement.clientHeight) {
-      viewportCompensation = document.documentElement.clientHeight - document.body.clientHeight
-    }
-
-    parent.style.paddingBottom = `calc(${initialPaddingBottom} + ${viewportCompensation}px)`
-    parent.style.paddingTop = `calc(100vh + ${initialPaddingTop})`
-
     centerMessage()
 
-    const prefetchImage = document.createElement("img")
+    updateBackground(() => {
+      updateViewport()
 
-    function onComplete() {
-      container.setAttribute("data-state", "loaded")
-    }
-
-    if (!backgroundImage) return onComplete()
-
-    prefetchImage.onload = () => {
-      container.style.backgroundImage = `url("${backgroundImage}")`
-      onComplete()
-    }
-
-    prefetchImage.onerror = onComplete
-    prefetchImage.src = backgroundImage
+      parent.setAttribute(STATE_ATTRIBUTE, "loaded")
+    })
   }
 
-  function onReady() {
+  function onLoaded() {
     updateElement()
     window.addEventListener("resize", centerMessage)
   }
 
+  function onReady() {
+    const parent = document.querySelector(options.location.selector)
+
+    parent.setAttribute(STATE_ATTRIBUTE, "loading")
+
+    mask.addEventListener("transitionend", () => {
+      mask.parentNode && mask.parentNode.removeChild(mask)
+    })
+
+    parent.appendChild(mask)
+  }
+
   window.INSTALL_SCOPE = {
+    updateBackground(nextOptions) {
+      options = nextOptions
+
+      const parent = document.querySelector(options.location.selector)
+
+      parent.setAttribute(STATE_ATTRIBUTE, "loading")
+      parent.appendChild(mask)
+
+      updateBackground(() => parent.setAttribute(STATE_ATTRIBUTE, "loaded"))
+    },
     updateElement(nextOptions) {
       options = nextOptions
 
@@ -141,10 +178,12 @@
     }
   }
 
+
   if (document.readyState === "loading") {
+    window.addEventListener("load", onLoaded)
     document.addEventListener("DOMContentLoaded", onReady)
   }
   else {
-    onReady()
+    onLoaded()
   }
 }())
