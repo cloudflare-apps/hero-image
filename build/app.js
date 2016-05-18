@@ -3,6 +3,7 @@
 (function () {
   if (!window.addEventListener) return; // Check for IE9+
 
+  var PARENT_SELECTOR = "body";
   var STATE_ATTRIBUTE = "data-hero-state";
   var TEXT_SHADOWS = {
     dark: "#333333",
@@ -84,7 +85,7 @@
   }
 
   function updateViewport() {
-    var parent = document.querySelector(options.location.selector);
+    var parent = document.querySelector(PARENT_SELECTOR);
 
     var _document$defaultView = document.defaultView.getComputedStyle(parent);
 
@@ -124,9 +125,12 @@
   }
 
   function _updateElement() {
-    var parent = document.querySelector(options.location.selector);
+    var parent = document.querySelector(PARENT_SELECTOR);
 
-    container = Eager.createElement(options.location, container);
+    container = Eager.createElement({
+      selector: PARENT_SELECTOR,
+      method: "prepend"
+    }, container);
     container.className = "eager-hero-image";
 
     container.addEventListener("click", function () {
@@ -156,7 +160,7 @@
   }
 
   function onReady() {
-    var parent = document.querySelector(options.location.selector);
+    var parent = document.querySelector(PARENT_SELECTOR);
 
     parent.setAttribute(STATE_ATTRIBUTE, "loading");
 
@@ -171,7 +175,7 @@
     updateBackground: function updateBackground(nextOptions) {
       options = nextOptions;
 
-      var parent = document.querySelector(options.location.selector);
+      var parent = document.querySelector(PARENT_SELECTOR);
 
       parent.setAttribute(STATE_ATTRIBUTE, "loading");
       parent.appendChild(mask);

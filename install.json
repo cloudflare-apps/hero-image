@@ -91,25 +91,6 @@
           "center": "Center",
           "right": "Right"
         }
-      },
-
-      "showAdvanced": {
-        "title": "Show advanced options",
-        "order": 6,
-        "type": "boolean"
-      },
-
-      "location": {
-        "showIf": "showAdvanced",
-        "title": "Hero Image parent element",
-        "description": "The element containing the Hero Image.",
-        "order": 7,
-        "type": "object",
-        "format": "element",
-        "default": {
-          "selector": "body",
-          "method": "prepend"
-        }
       }
     }
   }

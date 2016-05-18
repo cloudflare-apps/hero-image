@@ -1,6 +1,7 @@
 (function () {
   if (!window.addEventListener) return // Check for IE9+
 
+  const PARENT_SELECTOR = "body"
   const STATE_ATTRIBUTE = "data-hero-state"
   const TEXT_SHADOWS = {
     dark: "#333333",
@@ -78,7 +79,7 @@
   }
 
   function updateViewport() {
-    const parent = document.querySelector(options.location.selector)
+    const parent = document.querySelector(PARENT_SELECTOR)
     const {paddingBottom, paddingTop} = document.defaultView.getComputedStyle(parent)
     let viewportCompensation = 0
 
@@ -110,9 +111,12 @@
   }
 
   function updateElement() {
-    const parent = document.querySelector(options.location.selector)
+    const parent = document.querySelector(PARENT_SELECTOR)
 
-    container = Eager.createElement(options.location, container)
+    container = Eager.createElement({
+      selector: PARENT_SELECTOR,
+      method: "prepend"
+    }, container)
     container.className = "eager-hero-image"
 
     container.addEventListener("click", () => scrollToTop({
@@ -140,7 +144,7 @@
   }
 
   function onReady() {
-    const parent = document.querySelector(options.location.selector)
+    const parent = document.querySelector(PARENT_SELECTOR)
 
     parent.setAttribute(STATE_ATTRIBUTE, "loading")
 
@@ -155,7 +159,7 @@
     updateBackground(nextOptions) {
       options = nextOptions
 
-      const parent = document.querySelector(options.location.selector)
+      const parent = document.querySelector(PARENT_SELECTOR)
 
       parent.setAttribute(STATE_ATTRIBUTE, "loading")
       parent.appendChild(mask)
