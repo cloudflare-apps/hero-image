@@ -80,7 +80,7 @@
         "title": "Text alignment",
         "type": "string",
         "order": 5,
-        "default": "left",
+        "default": "center",
         "enum": [
           "left",
           "center",
