@@ -8,6 +8,7 @@
     light: "#efefef",
     none: "transparent"
   }
+  const preview = INSTALL_ID === "preview"
   const mask = document.createElement("eager-hero-mask")
   const message = document.createElement("eager-message")
   const caret = document.createElement("eager-caret")
@@ -119,10 +120,22 @@
     }, container)
     container.className = "eager-hero-image"
 
-    container.addEventListener("click", () => scrollToTop({
-      element: parent,
-      finalY: container.clientHeight
-    }))
+    if (options.redirect) {
+      container.addEventListener("click", function() {
+        if (preview){
+          window.location.reload()
+        }
+        else {
+          window.location = options.redirectURL
+        }
+      })
+    }
+    else {
+      container.addEventListener("click", () => scrollToTop({
+        element: parent,
+        finalY: container.clientHeight
+      }))
+    }
 
     updateInnerContent()
 

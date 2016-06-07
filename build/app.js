@@ -10,6 +10,7 @@
     light: "#efefef",
     none: "transparent"
   };
+  var preview = INSTALL_ID === "preview";
   var mask = document.createElement("eager-hero-mask");
   var message = document.createElement("eager-message");
   var caret = document.createElement("eager-caret");
@@ -133,12 +134,22 @@
     }, container);
     container.className = "eager-hero-image";
 
-    container.addEventListener("click", function () {
-      return scrollToTop({
-        element: parent,
-        finalY: container.clientHeight
+    if (options.redirect) {
+      container.addEventListener("click", function () {
+        if (preview) {
+          window.location.reload();
+        } else {
+          window.location = options.redirectURL;
+        }
       });
-    });
+    } else {
+      container.addEventListener("click", function () {
+        return scrollToTop({
+          element: parent,
+          finalY: container.clientHeight
+        });
+      });
+    }
 
     _updateInnerContent();
 

@@ -53,7 +53,7 @@
       "textColor": {
         "default": "#ffffff",
         "title": "Text color",
-        "order": 3,
+        "order": 2,
         "type": "string",
         "format": "color",
         "placeholder": "#..."
@@ -72,14 +72,30 @@
         },
         "default": "dark",
         "title": "Text shadow color",
-        "order": 4,
+        "order": 3,
         "type": "string"
+      },
+
+      "redirect": {
+        "default": false,
+        "title": "Redirect when Image is clicked",
+        "order": 4,
+        "type": "boolean"
+      },
+
+      "redirectURL": {
+        "description": "The page just refreshes in preview mode, it will redirect in production",
+        "placeholder": "https://www.website.com/",
+        "title": "Redirect URL",
+        "order": 5,
+        "type": "string",
+        "showIf": "redirect"
       },
 
       "alignment": {
         "title": "Text alignment",
         "type": "string",
-        "order": 5,
+        "order": 6,
         "default": "center",
         "enum": [
           "left",
