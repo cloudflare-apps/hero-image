@@ -26,6 +26,10 @@
       {
         "options": ["location"],
         "execute": "INSTALL_SCOPE.updateElement(INSTALL_OPTIONS)"
+      },
+      {
+        "options": ["navigatorBehavior", "redirectURL"],
+        "execute": "INSTALL_SCOPE.updateNavigatorBehavior(INSTALL_OPTIONS)"
       }
     ]
   },
@@ -76,20 +80,28 @@
         "type": "string"
       },
 
-      "redirect": {
-        "default": false,
-        "title": "Redirect when Image is clicked",
+      "navigatorBehavior": {
+        "enum": [
+          "scroll",
+          "redirect"
+        ],
+        "enumNames": {
+            "scroll": "Scroll down the page",
+            "redirect": "Redirect to a different site"
+          },
+        "default": "scroll",
+        "title": "When the user clicks the Hero Image",
         "order": 4,
-        "type": "boolean"
+        "type": "string",
+        "format": "radios"
       },
 
       "redirectURL": {
-        "description": "The page just refreshes in preview mode, it will redirect in production",
-        "placeholder": "https://www.website.com/",
+        "placeholder": "https://",
         "title": "Redirect URL",
         "order": 5,
         "type": "string",
-        "showIf": "redirect"
+        "showIf": {"navigatorBehavior": "redirect"}
       },
 
       "alignment": {

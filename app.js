@@ -8,7 +8,7 @@
     light: "#efefef",
     none: "transparent"
   }
-  const preview = INSTALL_ID === "preview"
+  const IS_PREVIEW = INSTALL_ID === "preview"
   const mask = document.createElement("eager-hero-mask")
   const message = document.createElement("eager-message")
   const caret = document.createElement("eager-caret")
@@ -120,22 +120,22 @@
     }, container)
     container.className = "eager-hero-image"
 
-    if (options.redirect) {
-      container.addEventListener("click", function() {
-        if (preview){
+    container.addEventListener("click", function() {
+      if (options.navigatorBehavior === "redirect" && options.redirectURL) {
+        if (IS_PREVIEW) {
           window.location.reload()
         }
         else {
           window.location = options.redirectURL
         }
-      })
-    }
-    else {
-      container.addEventListener("click", () => scrollToTop({
-        element: parent,
-        finalY: container.clientHeight
-      }))
-    }
+      }
+      else {
+        scrollToTop({
+          element: parent,
+          finalY: container.clientHeight
+        })
+      }
+    })
 
     updateInnerContent()
 
@@ -169,6 +169,9 @@
   }
 
   window.INSTALL_SCOPE = {
+    updateNavigatorBehavior(nextOptions) {
+      options = nextOptions
+    },
     updateBackground(nextOptions) {
       options = nextOptions
 

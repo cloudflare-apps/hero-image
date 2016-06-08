@@ -10,7 +10,7 @@
     light: "#efefef",
     none: "transparent"
   };
-  var preview = INSTALL_ID === "preview";
+  var IS_PREVIEW = INSTALL_ID === "preview";
   var mask = document.createElement("eager-hero-mask");
   var message = document.createElement("eager-message");
   var caret = document.createElement("eager-caret");
@@ -134,22 +134,20 @@
     }, container);
     container.className = "eager-hero-image";
 
-    if (options.redirect) {
-      container.addEventListener("click", function () {
-        if (preview) {
+    container.addEventListener("click", function () {
+      if (options.navigatorBehavior === "redirect" && options.redirectURL) {
+        if (IS_PREVIEW) {
           window.location.reload();
         } else {
           window.location = options.redirectURL;
         }
-      });
-    } else {
-      container.addEventListener("click", function () {
-        return scrollToTop({
+      } else {
+        scrollToTop({
           element: parent,
           finalY: container.clientHeight
         });
-      });
-    }
+      }
+    });
 
     _updateInnerContent();
 
@@ -183,6 +181,9 @@
   }
 
   window.INSTALL_SCOPE = {
+    updateNavigatorBehavior: function updateNavigatorBehavior(nextOptions) {
+      options = nextOptions;
+    },
     updateBackground: function updateBackground(nextOptions) {
       options = nextOptions;
 
