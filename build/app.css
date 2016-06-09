@@ -56,8 +56,9 @@ eager-hero-mask {
 }
 
 .eager-hero-image eager-message > *:first-child {
-  margin-top: 0;
-  padding-top: 0;
+  margin: 0;
+  margin-bottom: 0.6em;
+  padding: 0;
 }
 
 .eager-hero-image eager-message > * {
