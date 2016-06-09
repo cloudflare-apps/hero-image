@@ -10,15 +10,27 @@
     light: "#efefef",
     none: "transparent"
   };
+  var IS_PREVIEW = INSTALL_ID === "preview";
   var mask = document.createElement("eager-hero-mask");
   var message = document.createElement("eager-message");
-  var caret = document.createElement("eager-caret");
+  var accentIcon = document.createElement("eager-accent-icon");
+  var getParent = document.querySelector.bind(document, PARENT_SELECTOR);
 
-  caret.innerHTML = "<svg width=\"1792\" height=\"1792\" viewBox=\"0 0 1792 1792\" xmlns=\"http://www.w3.org/2000/svg\">\n    <path d=\"M1683 808l-742 741q-19 19-45 19t-45-19l-742-741q-19-19-19-45.5t19-45.5l166-165q19-19 45-19t45 19l531 531 531-531q19-19 45-19t45 19l166 165q19 19 19 45.5t-19 45.5z\"/>\n  </svg>";
+  var ICONS = {
+    scroll: "<svg width=\"1792\" height=\"1792\" viewBox=\"0 0 1792 1792\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M1683 808l-742 741q-19 19-45 19t-45-19l-742-741q-19-19-19-45.5t19-45.5l166-165q19-19 45-19t45 19l531 531 531-531q19-19 45-19t45 19l166 165q19 19 19 45.5t-19 45.5z\"/>\n    </svg>",
+    redirect: "<svg width=\"1792\" height=\"1792\" viewBox=\"0 0 1792 1792\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M1600 960q0 54-37 91l-651 651q-39 37-91 37-51 0-90-37l-75-75q-38-38-38-91t38-91l293-293h-704q-52 0-84.5-37.5t-32.5-90.5v-128q0-53 32.5-90.5t84.5-37.5h704l-293-294q-38-36-38-90t38-90l75-75q38-38 90-38 53 0 91 38l651 651q37 35 37 90z\"/>\n    </svg>"
+  };
 
   var container = void 0;
   var options = INSTALL_OPTIONS;
   var animationFrame = void 0;
+  var scrollTimeout = void 0;
+
+  function resetScrollPosition() {
+    var parent = getParent();
+
+    parent.scrollTop = 0;
+  }
 
   function easeInOutQuad(time, value, delta, duration) {
     time /= duration / 2;
@@ -72,6 +84,21 @@
     if (centerAdjustment > 0) message.style.transform = "translateY(" + centerAdjustment + "px)";
   }
 
+  function handleContentClick() {
+    var parent = getParent();
+
+    if (options.navigatorBehavior === "redirect") {
+      if (IS_PREVIEW) return window.location.reload();
+
+      window.location = options.redirectURL;
+    } else {
+      scrollToTop({
+        element: parent,
+        finalY: container.clientHeight
+      });
+    }
+  }
+
   function _updateInnerContent() {
     if (!container) return;
 
@@ -80,12 +107,10 @@
     container.style.color = options.textColor;
     container.style.textShadow = "1px 1px 3px " + TEXT_SHADOWS[options.textShadowColor];
     message.innerHTML = options.message.html;
-
-    caret.firstChild.style.fill = options.textColor;
   }
 
   function updateViewport() {
-    var parent = document.querySelector(PARENT_SELECTOR);
+    var parent = getParent();
 
     var _document$defaultView = document.defaultView.getComputedStyle(parent);
 
@@ -124,8 +149,14 @@
     prefetchImage.src = backgroundImage;
   }
 
+  function updateIcon() {
+    accentIcon.innerHTML = ICONS[options.navigatorBehavior];
+
+    accentIcon.firstChild.style.fill = options.textColor;
+  }
+
   function _updateElement() {
-    var parent = document.querySelector(PARENT_SELECTOR);
+    var parent = getParent();
 
     container = Eager.createElement({
       selector: PARENT_SELECTOR,
@@ -133,17 +164,14 @@
     }, container);
     container.className = "eager-hero-image";
 
-    container.addEventListener("click", function () {
-      return scrollToTop({
-        element: parent,
-        finalY: container.clientHeight
-      });
-    });
+    container.addEventListener("click", handleContentClick);
 
     _updateInnerContent();
 
     container.appendChild(message);
-    container.appendChild(caret);
+    container.appendChild(accentIcon);
+
+    updateIcon();
 
     centerMessage();
 
@@ -160,7 +188,7 @@
   }
 
   function onReady() {
-    var parent = document.querySelector(PARENT_SELECTOR);
+    var parent = getParent();
 
     parent.setAttribute(STATE_ATTRIBUTE, "loading");
 
@@ -172,10 +200,18 @@
   }
 
   window.INSTALL_SCOPE = {
+    updateNavigatorBehavior: function updateNavigatorBehavior(nextOptions) {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(resetScrollPosition, 1000);
+
+      options = nextOptions;
+
+      updateIcon();
+    },
     updateBackground: function updateBackground(nextOptions) {
       options = nextOptions;
 
-      var parent = document.querySelector(PARENT_SELECTOR);
+      var parent = getParent();
 
       parent.setAttribute(STATE_ATTRIBUTE, "loading");
       parent.appendChild(mask);

@@ -2,7 +2,7 @@
   "resources": {
     "head": [
       {
-        "src": "app.css",
+        "src": "build/app.css",
         "type": "style"
       },
       {
@@ -26,6 +26,10 @@
       {
         "options": ["location"],
         "execute": "INSTALL_SCOPE.updateElement(INSTALL_OPTIONS)"
+      },
+      {
+        "options": ["navigatorBehavior", "redirectURL"],
+        "execute": "INSTALL_SCOPE.updateNavigatorBehavior(INSTALL_OPTIONS)"
       }
     ]
   },
@@ -53,7 +57,7 @@
       "textColor": {
         "default": "#ffffff",
         "title": "Text color",
-        "order": 3,
+        "order": 2,
         "type": "string",
         "format": "color",
         "placeholder": "#..."
@@ -72,14 +76,38 @@
         },
         "default": "dark",
         "title": "Text shadow color",
-        "order": 4,
+        "order": 3,
         "type": "string"
+      },
+
+      "navigatorBehavior": {
+        "enum": [
+          "scroll",
+          "redirect"
+        ],
+        "enumNames": {
+            "scroll": "Scroll down the page.",
+            "redirect": "Redirect to a different site."
+          },
+        "default": "scroll",
+        "title": "When the user clicks the Hero Image...",
+        "order": 4,
+        "type": "string",
+        "format": "radios"
+      },
+
+      "redirectURL": {
+        "placeholder": "https://",
+        "title": "Redirect URL",
+        "order": 5,
+        "type": "string",
+        "showIf": {"navigatorBehavior": "redirect"}
       },
 
       "alignment": {
         "title": "Text alignment",
         "type": "string",
-        "order": 5,
+        "order": 6,
         "default": "center",
         "enum": [
           "left",
