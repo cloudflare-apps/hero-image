@@ -2,7 +2,7 @@
   "resources": {
     "head": [
       {
-        "src": "app.css",
+        "src": "build/app.css",
         "type": "style"
       },
       {
@@ -86,11 +86,11 @@
           "redirect"
         ],
         "enumNames": {
-            "scroll": "Scroll down the page",
-            "redirect": "Redirect to a different site"
+            "scroll": "Scroll down the page.",
+            "redirect": "Redirect to a different site."
           },
         "default": "scroll",
-        "title": "When the user clicks the Hero Image",
+        "title": "When the user clicks the Hero Image...",
         "order": 4,
         "type": "string",
         "format": "radios"
