@@ -232,8 +232,8 @@
   };
 
   if (document.readyState === "loading") {
-    window.addEventListener("load", onResourcesLoaded);
     document.addEventListener("DOMContentLoaded", onDOMLoaded);
+    window.addEventListener("load", onResourcesLoaded);
   } else {
     onResourcesLoaded();
   }
