@@ -21,6 +21,7 @@
     </svg>`
   }
 
+  let deferredBootstrap
   let parentElement
   let container
   let options = INSTALL_OPTIONS
@@ -160,13 +161,19 @@
     })
   }
 
-  function onLoaded() {
+  function onResourcesLoaded() {
+    // IE10 can load all resources before the DOM is loaded
+    if (!parentElement) {
+      deferredBootstrap = onResourcesLoaded
+      return
+    }
+
     updateElement()
 
     window.addEventListener("resize", centerMessage)
   }
 
-  function onReady() {
+  function onDOMLoaded() {
     parentElement = document.body
     parentElement.setAttribute(STATE_ATTRIBUTE, "loading")
 
@@ -175,6 +182,11 @@
     })
 
     parentElement.appendChild(mask)
+
+    if (deferredBootstrap) {
+      deferredBootstrap()
+      deferredBootstrap = null
+    }
   }
 
   window.INSTALL_SCOPE = {
@@ -209,10 +221,10 @@
 
 
   if (document.readyState === "loading") {
-    window.addEventListener("load", onLoaded)
-    document.addEventListener("DOMContentLoaded", onReady)
+    window.addEventListener("load", onResourcesLoaded)
+    document.addEventListener("DOMContentLoaded", onDOMLoaded)
   }
   else {
-    onLoaded()
+    onResourcesLoaded()
   }
 }())
