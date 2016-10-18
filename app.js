@@ -219,13 +219,22 @@
     }
   }
 
+  function checkBodyReadiness() {
+    if (!document.body) {
+      requestAnimationFrame(checkBodyReadiness)
+      return
+    }
+
+    deferredBootstrap = onResourcesLoaded
+    onDOMLoaded()
+  }
+
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", onDOMLoaded)
     window.addEventListener("load", onResourcesLoaded)
   }
   else {
-    deferredBootstrap = onResourcesLoaded
-    onDOMLoaded()
+    checkBodyReadiness()
   }
 }())
