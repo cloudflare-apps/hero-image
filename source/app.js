@@ -1,3 +1,5 @@
+import smoothScroll from "smoothscroll"
+
 (function () {
   if (!window.addEventListener) return // Check for IE9+
 
@@ -26,49 +28,10 @@
   let parentElement
   let container
   let options = INSTALL_OPTIONS
-  let animationFrame
   let scrollTimeout
 
   function resetScrollPosition() {
     parentElement.scrollTop = 0
-  }
-
-  function easeInOutQuad(time, value, delta, duration) {
-    time /= duration / 2
-
-    if (time < 1) return delta / 2 * time * time + value
-
-    time--
-    return -delta / 2 * (time * (time - 2) - 1) + value
-  }
-
-  function scrollToTop({element, duration = 600, finalY = 0}) {
-    const initialY = element.scrollTop
-    const delta = finalY - initialY
-    const increment = 20
-    const start = Date.now()
-    const animate = window.requestAnimationFrame || window.setTimeout
-    const cancelAnimate = window.cancelAnimationFrame || window.clearTimeout
-
-    let currentTime = 0
-
-    function animateScroll() {
-      const elapsed = Date.now() - start
-
-      // This limit serves to prevent an infinite loop if scrolling is interrupted by a user or event handler.
-      if (elapsed > duration * 2) {
-        element.scrollTop = finalY
-        return
-      }
-
-      currentTime += increment
-      element.scrollTop = easeInOutQuad(currentTime, initialY, delta, duration)
-
-      if (element.scrollTop < finalY) animationFrame = animate(animateScroll, increment)
-    }
-
-    cancelAnimate(animationFrame)
-    animateScroll()
   }
 
   function centerMessage() {
@@ -86,10 +49,7 @@
       window.location = options.redirectURL
     }
     else {
-      scrollToTop({
-        element: parentElement,
-        finalY: container.clientHeight
-      })
+      smoothScroll(scrollAnchor, 600)
     }
   }
 

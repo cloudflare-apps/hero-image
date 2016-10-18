@@ -8,7 +8,7 @@
     "build:css": "postcss --use autoprefixer -o build/app.css source/app.css",
     "build:js": "rollup -c",
     "lint": "eslint ./source",
-    "watch:js": "babel --watch --out-dir build source",
+    "watch:js": "rollup -cw",
     "watch:css": "postcss --watch --use autoprefixer -o build/app.css source/app.css"
   },
   "repository": {
@@ -21,7 +21,9 @@
     "url": "https://github.com/EagerApps/HeroImage/issues"
   },
   "homepage": "https://github.com/EagerApps/HeroImage#readme",
-  "dependencies": {},
+  "dependencies": {
+    "smoothscroll": "0.2.2"
+  },
   "devDependencies": {
     "autoprefixer": "6.3.6",
     "babel-cli": "6.8.0",

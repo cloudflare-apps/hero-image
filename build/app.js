@@ -1,252 +1,333 @@
-"use strict";
-
 (function () {
-  if (!window.addEventListener) return; // Check for IE9+
+	'use strict';
 
-  var STATE_ATTRIBUTE = "data-hero-state";
-  var TEXT_SHADOWS = {
-    dark: "#333333",
-    light: "#efefef",
-    none: "transparent"
-  };
-  var IS_PREVIEW = INSTALL_ID === "preview";
-  var mask = document.createElement("eager-hero-mask");
-  var message = document.createElement("eager-message");
-  var accentIcon = document.createElement("eager-accent-icon");
-  var scrollAnchor = document.createElement("eager-scroll-anchor");
+	var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {}
 
-  var ICONS = {
-    scroll: "<svg width=\"1792\" height=\"1792\" viewBox=\"0 0 1792 1792\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M1683 808l-742 741q-19 19-45 19t-45-19l-742-741q-19-19-19-45.5t19-45.5l166-165q19-19 45-19t45 19l531 531 531-531q19-19 45-19t45 19l166 165q19 19 19 45.5t-19 45.5z\"/>\n    </svg>",
-    redirect: "<svg width=\"1792\" height=\"1792\" viewBox=\"0 0 1792 1792\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M1600 960q0 54-37 91l-651 651q-39 37-91 37-51 0-90-37l-75-75q-38-38-38-91t38-91l293-293h-704q-52 0-84.5-37.5t-32.5-90.5v-128q0-53 32.5-90.5t84.5-37.5h704l-293-294q-38-36-38-90t38-90l75-75q38-38 90-38 53 0 91 38l651 651q37 35 37 90z\"/>\n    </svg>"
-  };
+	function createCommonjsModule(fn, module) {
+		return module = { exports: {} }, fn(module, module.exports), module.exports;
+	}
 
-  var deferredBootstrap = void 0;
-  var parentElement = void 0;
-  var container = void 0;
-  var options = INSTALL_OPTIONS;
-  var animationFrame = void 0;
-  var scrollTimeout = void 0;
+	var smoothscroll = createCommonjsModule(function (module, exports) {
+	(function (root, smoothScroll) {
+	  'use strict';
 
-  function resetScrollPosition() {
-    parentElement.scrollTop = 0;
-  }
+	  // Support RequireJS and CommonJS/NodeJS module formats.
+	  // Attach smoothScroll to the `window` when executed as a <script>.
 
-  function easeInOutQuad(time, value, delta, duration) {
-    time /= duration / 2;
+	  // RequireJS
+	  if (typeof define === 'function' && define.amd) {
+	    define(smoothScroll);
 
-    if (time < 1) return delta / 2 * time * time + value;
+	  // CommonJS
+	  } else if (typeof exports === 'object' && typeof module === 'object') {
+	    module.exports = smoothScroll();
 
-    time--;
-    return -delta / 2 * (time * (time - 2) - 1) + value;
-  }
+	  } else {
+	    root.smoothScroll = smoothScroll();
+	  }
 
-  function scrollToTop(_ref) {
-    var element = _ref.element;
-    var _ref$duration = _ref.duration;
-    var duration = _ref$duration === undefined ? 600 : _ref$duration;
-    var _ref$finalY = _ref.finalY;
-    var finalY = _ref$finalY === undefined ? 0 : _ref$finalY;
+	})(commonjsGlobal, function(){
+	'use strict';
 
-    var initialY = element.scrollTop;
-    var delta = finalY - initialY;
-    var increment = 20;
-    var start = Date.now();
-    var animate = window.requestAnimationFrame || window.setTimeout;
-    var cancelAnimate = window.cancelAnimationFrame || window.clearTimeout;
+	// Do not initialize smoothScroll when running server side, handle it in client:
+	if (typeof window !== 'object') return;
 
-    var currentTime = 0;
+	// We do not want this script to be applied in browsers that do not support those
+	// That means no smoothscroll on IE9 and below.
+	if(document.querySelectorAll === void 0 || window.pageYOffset === void 0 || history.pushState === void 0) { return; }
 
-    function animateScroll() {
-      var elapsed = Date.now() - start;
+	// Get the top position of an element in the document
+	var getTop = function(element) {
+	    // return value of html.getBoundingClientRect().top ... IE : 0, other browsers : -pageYOffset
+	    if(element.nodeName === 'HTML') return -window.pageYOffset
+	    return element.getBoundingClientRect().top + window.pageYOffset;
+	}
+	// ease in out function thanks to:
+	// http://blog.greweb.fr/2012/02/bezier-curve-based-easing-functions-from-concept-to-implementation/
+	var easeInOutCubic = function (t) { return t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1 }
 
-      // This limit serves to prevent an infinite loop if scrolling is interrupted by a user or event handler.
-      if (elapsed > duration * 2) {
-        element.scrollTop = finalY;
-        return;
-      }
+	// calculate the scroll position we should be in
+	// given the start and end point of the scroll
+	// the time elapsed from the beginning of the scroll
+	// and the total duration of the scroll (default 500ms)
+	var position = function(start, end, elapsed, duration) {
+	    if (elapsed > duration) return end;
+	    return start + (end - start) * easeInOutCubic(elapsed / duration); // <-- you can change the easing funtion there
+	    // return start + (end - start) * (elapsed / duration); // <-- this would give a linear scroll
+	}
 
-      currentTime += increment;
-      element.scrollTop = easeInOutQuad(currentTime, initialY, delta, duration);
+	// we use requestAnimationFrame to be called by the browser before every repaint
+	// if the first argument is an element then scroll to the top of this element
+	// if the first argument is numeric then scroll to this location
+	// if the callback exist, it is called when the scrolling is finished
+	// if context is set then scroll that element, else scroll window 
+	var smoothScroll = function(el, duration, callback, context){
+	    duration = duration || 500;
+	    context = context || window;
+	    var start = window.pageYOffset;
 
-      if (element.scrollTop < finalY) animationFrame = animate(animateScroll, increment);
-    }
+	    if (typeof el === 'number') {
+	      var end = parseInt(el);
+	    } else {
+	      var end = getTop(el);
+	    }
 
-    cancelAnimate(animationFrame);
-    animateScroll();
-  }
+	    var clock = Date.now();
+	    var requestAnimationFrame = window.requestAnimationFrame ||
+	        window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
+	        function(fn){window.setTimeout(fn, 15);};
 
-  function centerMessage() {
-    if (!container) return; // Elements not ready
+	    var step = function(){
+	        var elapsed = Date.now() - clock;
+	        if (context !== window) {
+	        	context.scrollTop = position(start, end, elapsed, duration);
+	        }
+	        else {
+	        	window.scroll(0, position(start, end, elapsed, duration));
+	        }
 
-    var centerAdjustment = (container.clientHeight - message.clientHeight) / 2;
+	        if (elapsed > duration) {
+	            if (typeof callback === 'function') {
+	                callback(el);
+	            }
+	        } else {
+	            requestAnimationFrame(step);
+	        }
+	    }
+	    step();
+	}
 
-    if (centerAdjustment > 0) message.style.transform = "translateY(" + centerAdjustment + "px)";
-  }
+	var linkHandler = function(ev) {
+	    ev.preventDefault();
 
-  function handleContentClick() {
-    if (options.navigatorBehavior === "redirect") {
-      if (IS_PREVIEW) return window.location.reload();
+	    if (location.hash !== this.hash) window.history.pushState(null, null, this.hash)
+	    // using the history api to solve issue #1 - back doesn't work
+	    // most browser don't update :target when the history api is used:
+	    // THIS IS A BUG FROM THE BROWSERS.
+	    // change the scrolling duration in this call
+	    smoothScroll(document.getElementById(this.hash.substring(1)), 500, function(el) {
+	        location.replace('#' + el.id)
+	        // this will cause the :target to be activated.
+	    });
+	}
 
-      window.location = options.redirectURL;
-    } else {
-      scrollToTop({
-        element: parentElement,
-        finalY: container.clientHeight
-      });
-    }
-  }
+	// We look for all the internal links in the documents and attach the smoothscroll function
+	document.addEventListener("DOMContentLoaded", function () {
+	    var internal = document.querySelectorAll('a[href^="#"]:not([href="#"])'), a;
+	    for(var i=internal.length; a=internal[--i];){
+	        a.addEventListener("click", linkHandler, false);
+	    }
+	});
 
-  function _updateInnerContent() {
-    if (!container) return;
+	// return smoothscroll API
+	return smoothScroll;
 
-    container.setAttribute("data-alignment", options.alignment);
+	});
+	});
 
-    container.style.color = options.textColor;
-    container.style.textShadow = "1px 1px 3px " + TEXT_SHADOWS[options.textShadowColor];
-    message.innerHTML = options.message.html;
-  }
+	var smoothScroll = (smoothscroll && typeof smoothscroll === 'object' && 'default' in smoothscroll ? smoothscroll['default'] : smoothscroll);
 
-  function updateViewport() {
-    var _document$defaultView = document.defaultView.getComputedStyle(parentElement);
+	(function () {
+	  if (!window.addEventListener) return; // Check for IE9+
 
-    var paddingBottom = _document$defaultView.paddingBottom;
-    var paddingTop = _document$defaultView.paddingTop;
+	  var STATE_ATTRIBUTE = "data-hero-state";
+	  var TEXT_SHADOWS = {
+	    dark: "#333333",
+	    light: "#efefef",
+	    none: "transparent"
+	  };
+	  var IS_PREVIEW = INSTALL_ID === "preview";
+	  var mask = document.createElement("eager-hero-mask");
+	  var message = document.createElement("eager-message");
+	  var accentIcon = document.createElement("eager-accent-icon");
+	  var scrollAnchor = document.createElement("eager-scroll-anchor");
 
-    var viewportCompensation = 0;
+	  var ICONS = {
+	    scroll: "<svg width=\"1792\" height=\"1792\" viewBox=\"0 0 1792 1792\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M1683 808l-742 741q-19 19-45 19t-45-19l-742-741q-19-19-19-45.5t19-45.5l166-165q19-19 45-19t45 19l531 531 531-531q19-19 45-19t45 19l166 165q19 19 19 45.5t-19 45.5z\"/>\n    </svg>",
+	    redirect: "<svg width=\"1792\" height=\"1792\" viewBox=\"0 0 1792 1792\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M1600 960q0 54-37 91l-651 651q-39 37-91 37-51 0-90-37l-75-75q-38-38-38-91t38-91l293-293h-704q-52 0-84.5-37.5t-32.5-90.5v-128q0-53 32.5-90.5t84.5-37.5h704l-293-294q-38-36-38-90t38-90l75-75q38-38 90-38 53 0 91 38l651 651q37 35 37 90z\"/>\n    </svg>"
+	  };
 
-    if (parentElement.clientHeight < document.documentElement.clientHeight) {
-      viewportCompensation = document.documentElement.clientHeight - parentElement.clientHeight;
-    }
+	  var deferredBootstrap = void 0;
+	  var parentElement = void 0;
+	  var container = void 0;
+	  var options = INSTALL_OPTIONS;
+	  var scrollTimeout = void 0;
 
-    parentElement.style.paddingBottom = "calc(" + paddingBottom + " + " + viewportCompensation + "px)";
-    parentElement.style.paddingTop = "calc(100vh + " + paddingTop + ")";
-  }
+	  function resetScrollPosition() {
+	    parentElement.scrollTop = 0;
+	  }
 
-  function _updateBackground() {
-    var onComplete = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-    var _options = options;
-    var backgroundImage = _options.backgroundImage;
+	  function centerMessage() {
+	    if (!container) return; // Elements not ready
 
-    var prefetchImage = document.createElement("img");
+	    var centerAdjustment = (container.clientHeight - message.clientHeight) / 2;
 
-    if (!backgroundImage) {
-      container.style.backgroundImage = "";
-      onComplete();
-      return;
-    }
+	    if (centerAdjustment > 0) message.style.transform = "translateY(" + centerAdjustment + "px)";
+	  }
 
-    prefetchImage.onload = function () {
-      container.style.backgroundImage = "url(\"" + backgroundImage + "\")";
-      onComplete();
-    };
+	  function handleContentClick() {
+	    if (options.navigatorBehavior === "redirect") {
+	      if (IS_PREVIEW) return window.location.reload();
 
-    prefetchImage.onerror = onComplete;
-    prefetchImage.src = backgroundImage;
-  }
+	      window.location = options.redirectURL;
+	    } else {
+	      smoothScroll(scrollAnchor, 600);
+	    }
+	  }
 
-  function updateIcon() {
-    accentIcon.innerHTML = ICONS[options.navigatorBehavior];
+	  function _updateInnerContent() {
+	    if (!container) return;
 
-    accentIcon.firstChild.style.fill = options.textColor;
-  }
+	    container.setAttribute("data-alignment", options.alignment);
 
-  function _updateElement() {
-    container = Eager.createElement({ selector: "body", method: "prepend" }, container);
-    container.className = "eager-hero-image";
+	    container.style.color = options.textColor;
+	    container.style.textShadow = "1px 1px 3px " + TEXT_SHADOWS[options.textShadowColor];
+	    message.innerHTML = options.message.html;
+	  }
 
-    container.addEventListener("click", handleContentClick);
+	  function updateViewport() {
+	    var _document$defaultView = document.defaultView.getComputedStyle(parentElement);
 
-    _updateInnerContent();
+	    var paddingBottom = _document$defaultView.paddingBottom;
+	    var paddingTop = _document$defaultView.paddingTop;
 
-    container.appendChild(message);
-    container.appendChild(accentIcon);
-    container.appendChild(scrollAnchor);
+	    var viewportCompensation = 0;
 
-    updateIcon();
+	    if (parentElement.clientHeight < document.documentElement.clientHeight) {
+	      viewportCompensation = document.documentElement.clientHeight - parentElement.clientHeight;
+	    }
 
-    centerMessage();
+	    parentElement.style.paddingBottom = "calc(" + paddingBottom + " + " + viewportCompensation + "px)";
+	    parentElement.style.paddingTop = "calc(100vh + " + paddingTop + ")";
+	  }
 
-    _updateBackground(function () {
-      updateViewport();
+	  function _updateBackground() {
+	    var onComplete = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+	    var _options = options;
+	    var backgroundImage = _options.backgroundImage;
 
-      parentElement.setAttribute(STATE_ATTRIBUTE, "loaded");
-    });
-  }
+	    var prefetchImage = document.createElement("img");
 
-  function onResourcesLoaded() {
-    // IE10 can load all resources before the DOM is loaded
-    if (!parentElement) {
-      deferredBootstrap = onResourcesLoaded;
-      return;
-    }
+	    if (!backgroundImage) {
+	      container.style.backgroundImage = "";
+	      onComplete();
+	      return;
+	    }
 
-    _updateElement();
+	    prefetchImage.onload = function () {
+	      container.style.backgroundImage = "url(\"" + backgroundImage + "\")";
+	      onComplete();
+	    };
 
-    window.addEventListener("resize", centerMessage);
-  }
+	    prefetchImage.onerror = onComplete;
+	    prefetchImage.src = backgroundImage;
+	  }
 
-  function onDOMLoaded() {
-    parentElement = document.body;
-    parentElement.setAttribute(STATE_ATTRIBUTE, "loading");
+	  function updateIcon() {
+	    accentIcon.innerHTML = ICONS[options.navigatorBehavior];
 
-    mask.addEventListener("transitionend", function () {
-      mask.parentNode && mask.parentNode.removeChild(mask);
-    });
+	    accentIcon.firstChild.style.fill = options.textColor;
+	  }
 
-    parentElement.appendChild(mask);
+	  function _updateElement() {
+	    container = Eager.createElement({ selector: "body", method: "prepend" }, container);
+	    container.className = "eager-hero-image";
 
-    if (deferredBootstrap) {
-      deferredBootstrap();
-      deferredBootstrap = null;
-    }
-  }
+	    container.addEventListener("click", handleContentClick);
 
-  window.INSTALL_SCOPE = {
-    updateNavigatorBehavior: function updateNavigatorBehavior(nextOptions) {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(resetScrollPosition, 1000);
+	    _updateInnerContent();
 
-      options = nextOptions;
+	    container.appendChild(message);
+	    container.appendChild(accentIcon);
+	    container.appendChild(scrollAnchor);
 
-      updateIcon();
-    },
-    updateBackground: function updateBackground(nextOptions) {
-      options = nextOptions;
+	    updateIcon();
 
-      parentElement.setAttribute(STATE_ATTRIBUTE, "loading");
-      parentElement.appendChild(mask);
+	    centerMessage();
 
-      _updateBackground(function () {
-        return parentElement.setAttribute(STATE_ATTRIBUTE, "loaded");
-      });
-    },
-    updateElement: function updateElement(nextOptions) {
-      options = nextOptions;
+	    _updateBackground(function () {
+	      updateViewport();
 
-      _updateElement();
-    },
-    updateInnerContent: function updateInnerContent(nextOptions) {
-      options = nextOptions;
+	      parentElement.setAttribute(STATE_ATTRIBUTE, "loaded");
+	    });
+	  }
 
-      _updateInnerContent();
-      centerMessage();
-    }
-  };
+	  function onResourcesLoaded() {
+	    // IE10 can load all resources before the DOM is loaded
+	    if (!parentElement) {
+	      deferredBootstrap = onResourcesLoaded;
+	      return;
+	    }
 
-  function checkBodyReadiness() {
-    if (!document.body) {
-      requestAnimationFrame(checkBodyReadiness);
-      return;
-    }
+	    _updateElement();
 
-    deferredBootstrap = onResourcesLoaded;
-    onDOMLoaded();
-  }
+	    window.addEventListener("resize", centerMessage);
+	  }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", onDOMLoaded);
-    window.addEventListener("load", onResourcesLoaded);
-  } else {
-    checkBodyReadiness();
-  }
-})();
+	  function onDOMLoaded() {
+	    parentElement = document.body;
+	    parentElement.setAttribute(STATE_ATTRIBUTE, "loading");
+
+	    mask.addEventListener("transitionend", function () {
+	      mask.parentNode && mask.parentNode.removeChild(mask);
+	    });
+
+	    parentElement.appendChild(mask);
+
+	    if (deferredBootstrap) {
+	      deferredBootstrap();
+	      deferredBootstrap = null;
+	    }
+	  }
+
+	  window.INSTALL_SCOPE = {
+	    updateNavigatorBehavior: function updateNavigatorBehavior(nextOptions) {
+	      clearTimeout(scrollTimeout);
+	      scrollTimeout = setTimeout(resetScrollPosition, 1000);
+
+	      options = nextOptions;
+
+	      updateIcon();
+	    },
+	    updateBackground: function updateBackground(nextOptions) {
+	      options = nextOptions;
+
+	      parentElement.setAttribute(STATE_ATTRIBUTE, "loading");
+	      parentElement.appendChild(mask);
+
+	      _updateBackground(function () {
+	        return parentElement.setAttribute(STATE_ATTRIBUTE, "loaded");
+	      });
+	    },
+	    updateElement: function updateElement(nextOptions) {
+	      options = nextOptions;
+
+	      _updateElement();
+	    },
+	    updateInnerContent: function updateInnerContent(nextOptions) {
+	      options = nextOptions;
+
+	      _updateInnerContent();
+	      centerMessage();
+	    }
+	  };
+
+	  function checkBodyReadiness() {
+	    if (!document.body) {
+	      requestAnimationFrame(checkBodyReadiness);
+	      return;
+	    }
+
+	    deferredBootstrap = onResourcesLoaded;
+	    onDOMLoaded();
+	  }
+
+	  if (document.readyState === "loading") {
+	    document.addEventListener("DOMContentLoaded", onDOMLoaded);
+	    window.addEventListener("load", onResourcesLoaded);
+	  } else {
+	    checkBodyReadiness();
+	  }
+	})();
+
+}());
