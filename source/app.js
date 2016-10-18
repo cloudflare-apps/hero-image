@@ -11,6 +11,7 @@
   const mask = document.createElement("eager-hero-mask")
   const message = document.createElement("eager-message")
   const accentIcon = document.createElement("eager-accent-icon")
+  const scrollAnchor = document.createElement("eager-scroll-anchor")
 
   const ICONS = {
     scroll: `<svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
@@ -149,6 +150,7 @@
 
     container.appendChild(message)
     container.appendChild(accentIcon)
+    container.appendChild(scrollAnchor)
 
     updateIcon()
 

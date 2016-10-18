@@ -77,3 +77,10 @@ eager-hero-mask {
   height: 1.6em;
   width: 1.6em;
 }
+
+.eager-hero-image eager-scroll-anchor {
+  display: inline-block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}

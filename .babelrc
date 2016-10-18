@@ -1,4 +1,3 @@
 {
-  "plugins": ["transform-inline-environment-variables"],
   "presets": ["es2015", "stage-0"]
 }

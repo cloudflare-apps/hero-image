@@ -13,6 +13,7 @@
   var mask = document.createElement("eager-hero-mask");
   var message = document.createElement("eager-message");
   var accentIcon = document.createElement("eager-accent-icon");
+  var scrollAnchor = document.createElement("eager-scroll-anchor");
 
   var ICONS = {
     scroll: "<svg width=\"1792\" height=\"1792\" viewBox=\"0 0 1792 1792\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M1683 808l-742 741q-19 19-45 19t-45-19l-742-741q-19-19-19-45.5t19-45.5l166-165q19-19 45-19t45 19l531 531 531-531q19-19 45-19t45 19l166 165q19 19 19 45.5t-19 45.5z\"/>\n    </svg>",
@@ -159,6 +160,7 @@
 
     container.appendChild(message);
     container.appendChild(accentIcon);
+    container.appendChild(scrollAnchor);
 
     updateIcon();
 
