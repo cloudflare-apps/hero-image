@@ -235,6 +235,7 @@
     document.addEventListener("DOMContentLoaded", onDOMLoaded);
     window.addEventListener("load", onResourcesLoaded);
   } else {
-    onResourcesLoaded();
+    deferredBootstrap = onResourcesLoaded;
+    onDOMLoaded();
   }
 })();

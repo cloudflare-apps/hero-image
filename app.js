@@ -225,6 +225,7 @@
     window.addEventListener("load", onResourcesLoaded)
   }
   else {
-    onResourcesLoaded()
+    deferredBootstrap = onResourcesLoaded
+    onDOMLoaded()
   }
 }())
