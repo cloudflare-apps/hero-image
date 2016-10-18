@@ -1,7 +1,6 @@
 (function () {
   if (!window.addEventListener) return // Check for IE9+
 
-  const PARENT_SELECTOR = "body"
   const STATE_ATTRIBUTE = "data-hero-state"
   const TEXT_SHADOWS = {
     dark: "#333333",
@@ -12,7 +11,6 @@
   const mask = document.createElement("eager-hero-mask")
   const message = document.createElement("eager-message")
   const accentIcon = document.createElement("eager-accent-icon")
-  const getParent = document.querySelector.bind(document, PARENT_SELECTOR)
 
   const ICONS = {
     scroll: `<svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
@@ -23,15 +21,14 @@
     </svg>`
   }
 
+  let parentElement
   let container
   let options = INSTALL_OPTIONS
   let animationFrame
   let scrollTimeout
 
   function resetScrollPosition() {
-    const parent = getParent()
-
-    parent.scrollTop = 0
+    parentElement.scrollTop = 0
   }
 
   function easeInOutQuad(time, value, delta, duration) {
@@ -81,8 +78,6 @@
   }
 
   function handleContentClick() {
-    const parent = getParent()
-
     if (options.navigatorBehavior === "redirect") {
       if (IS_PREVIEW) return window.location.reload()
 
@@ -90,7 +85,7 @@
     }
     else {
       scrollToTop({
-        element: parent,
+        element: parentElement,
         finalY: container.clientHeight
       })
     }
@@ -107,16 +102,15 @@
   }
 
   function updateViewport() {
-    const parent = getParent()
-    const {paddingBottom, paddingTop} = document.defaultView.getComputedStyle(parent)
+    const {paddingBottom, paddingTop} = document.defaultView.getComputedStyle(parentElement)
     let viewportCompensation = 0
 
-    if (parent.clientHeight < document.documentElement.clientHeight) {
-      viewportCompensation = document.documentElement.clientHeight - parent.clientHeight
+    if (parentElement.clientHeight < document.documentElement.clientHeight) {
+      viewportCompensation = document.documentElement.clientHeight - parentElement.clientHeight
     }
 
-    parent.style.paddingBottom = `calc(${paddingBottom} + ${viewportCompensation}px)`
-    parent.style.paddingTop = `calc(100vh + ${paddingTop})`
+    parentElement.style.paddingBottom = `calc(${paddingBottom} + ${viewportCompensation}px)`
+    parentElement.style.paddingTop = `calc(100vh + ${paddingTop})`
   }
 
   function updateBackground(onComplete = () => {}) {
@@ -145,12 +139,7 @@
   }
 
   function updateElement() {
-    const parent = getParent()
-
-    container = Eager.createElement({
-      selector: PARENT_SELECTOR,
-      method: "prepend"
-    }, container)
+    container = Eager.createElement({selector: "body", method: "prepend"}, container)
     container.className = "eager-hero-image"
 
     container.addEventListener("click", handleContentClick)
@@ -167,25 +156,25 @@
     updateBackground(() => {
       updateViewport()
 
-      parent.setAttribute(STATE_ATTRIBUTE, "loaded")
+      parentElement.setAttribute(STATE_ATTRIBUTE, "loaded")
     })
   }
 
   function onLoaded() {
     updateElement()
+
     window.addEventListener("resize", centerMessage)
   }
 
   function onReady() {
-    const parent = getParent()
-
-    parent.setAttribute(STATE_ATTRIBUTE, "loading")
+    parentElement = document.body
+    parentElement.setAttribute(STATE_ATTRIBUTE, "loading")
 
     mask.addEventListener("transitionend", () => {
       mask.parentNode && mask.parentNode.removeChild(mask)
     })
 
-    parent.appendChild(mask)
+    parentElement.appendChild(mask)
   }
 
   window.INSTALL_SCOPE = {
@@ -200,12 +189,10 @@
     updateBackground(nextOptions) {
       options = nextOptions
 
-      const parent = getParent()
+      parentElement.setAttribute(STATE_ATTRIBUTE, "loading")
+      parentElement.appendChild(mask)
 
-      parent.setAttribute(STATE_ATTRIBUTE, "loading")
-      parent.appendChild(mask)
-
-      updateBackground(() => parent.setAttribute(STATE_ATTRIBUTE, "loaded"))
+      updateBackground(() => parentElement.setAttribute(STATE_ATTRIBUTE, "loaded"))
     },
     updateElement(nextOptions) {
       options = nextOptions

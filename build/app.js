@@ -3,7 +3,6 @@
 (function () {
   if (!window.addEventListener) return; // Check for IE9+
 
-  var PARENT_SELECTOR = "body";
   var STATE_ATTRIBUTE = "data-hero-state";
   var TEXT_SHADOWS = {
     dark: "#333333",
@@ -14,22 +13,20 @@
   var mask = document.createElement("eager-hero-mask");
   var message = document.createElement("eager-message");
   var accentIcon = document.createElement("eager-accent-icon");
-  var getParent = document.querySelector.bind(document, PARENT_SELECTOR);
 
   var ICONS = {
     scroll: "<svg width=\"1792\" height=\"1792\" viewBox=\"0 0 1792 1792\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M1683 808l-742 741q-19 19-45 19t-45-19l-742-741q-19-19-19-45.5t19-45.5l166-165q19-19 45-19t45 19l531 531 531-531q19-19 45-19t45 19l166 165q19 19 19 45.5t-19 45.5z\"/>\n    </svg>",
     redirect: "<svg width=\"1792\" height=\"1792\" viewBox=\"0 0 1792 1792\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M1600 960q0 54-37 91l-651 651q-39 37-91 37-51 0-90-37l-75-75q-38-38-38-91t38-91l293-293h-704q-52 0-84.5-37.5t-32.5-90.5v-128q0-53 32.5-90.5t84.5-37.5h704l-293-294q-38-36-38-90t38-90l75-75q38-38 90-38 53 0 91 38l651 651q37 35 37 90z\"/>\n    </svg>"
   };
 
+  var parentElement = void 0;
   var container = void 0;
   var options = INSTALL_OPTIONS;
   var animationFrame = void 0;
   var scrollTimeout = void 0;
 
   function resetScrollPosition() {
-    var parent = getParent();
-
-    parent.scrollTop = 0;
+    parentElement.scrollTop = 0;
   }
 
   function easeInOutQuad(time, value, delta, duration) {
@@ -85,15 +82,13 @@
   }
 
   function handleContentClick() {
-    var parent = getParent();
-
     if (options.navigatorBehavior === "redirect") {
       if (IS_PREVIEW) return window.location.reload();
 
       window.location = options.redirectURL;
     } else {
       scrollToTop({
-        element: parent,
+        element: parentElement,
         finalY: container.clientHeight
       });
     }
@@ -110,25 +105,23 @@
   }
 
   function updateViewport() {
-    var parent = getParent();
-
-    var _document$defaultView = document.defaultView.getComputedStyle(parent);
+    var _document$defaultView = document.defaultView.getComputedStyle(parentElement);
 
     var paddingBottom = _document$defaultView.paddingBottom;
     var paddingTop = _document$defaultView.paddingTop;
 
     var viewportCompensation = 0;
 
-    if (parent.clientHeight < document.documentElement.clientHeight) {
-      viewportCompensation = document.documentElement.clientHeight - parent.clientHeight;
+    if (parentElement.clientHeight < document.documentElement.clientHeight) {
+      viewportCompensation = document.documentElement.clientHeight - parentElement.clientHeight;
     }
 
-    parent.style.paddingBottom = "calc(" + paddingBottom + " + " + viewportCompensation + "px)";
-    parent.style.paddingTop = "calc(100vh + " + paddingTop + ")";
+    parentElement.style.paddingBottom = "calc(" + paddingBottom + " + " + viewportCompensation + "px)";
+    parentElement.style.paddingTop = "calc(100vh + " + paddingTop + ")";
   }
 
   function _updateBackground() {
-    var onComplete = arguments.length <= 0 || arguments[0] === undefined ? function () {} : arguments[0];
+    var onComplete = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
     var _options = options;
     var backgroundImage = _options.backgroundImage;
 
@@ -156,12 +149,7 @@
   }
 
   function _updateElement() {
-    var parent = getParent();
-
-    container = Eager.createElement({
-      selector: PARENT_SELECTOR,
-      method: "prepend"
-    }, container);
+    container = Eager.createElement({ selector: "body", method: "prepend" }, container);
     container.className = "eager-hero-image";
 
     container.addEventListener("click", handleContentClick);
@@ -178,25 +166,25 @@
     _updateBackground(function () {
       updateViewport();
 
-      parent.setAttribute(STATE_ATTRIBUTE, "loaded");
+      parentElement.setAttribute(STATE_ATTRIBUTE, "loaded");
     });
   }
 
   function onLoaded() {
     _updateElement();
+
     window.addEventListener("resize", centerMessage);
   }
 
   function onReady() {
-    var parent = getParent();
-
-    parent.setAttribute(STATE_ATTRIBUTE, "loading");
+    parentElement = document.body;
+    parentElement.setAttribute(STATE_ATTRIBUTE, "loading");
 
     mask.addEventListener("transitionend", function () {
       mask.parentNode && mask.parentNode.removeChild(mask);
     });
 
-    parent.appendChild(mask);
+    parentElement.appendChild(mask);
   }
 
   window.INSTALL_SCOPE = {
@@ -211,13 +199,11 @@
     updateBackground: function updateBackground(nextOptions) {
       options = nextOptions;
 
-      var parent = getParent();
-
-      parent.setAttribute(STATE_ATTRIBUTE, "loading");
-      parent.appendChild(mask);
+      parentElement.setAttribute(STATE_ATTRIBUTE, "loading");
+      parentElement.appendChild(mask);
 
       _updateBackground(function () {
-        return parent.setAttribute(STATE_ATTRIBUTE, "loaded");
+        return parentElement.setAttribute(STATE_ATTRIBUTE, "loaded");
       });
     },
     updateElement: function updateElement(nextOptions) {
