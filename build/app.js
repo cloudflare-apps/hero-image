@@ -186,10 +186,9 @@
 	  }
 
 	  function updateViewport() {
-	    var _document$defaultView = document.defaultView.getComputedStyle(parentElement);
-
-	    var paddingBottom = _document$defaultView.paddingBottom;
-	    var paddingTop = _document$defaultView.paddingTop;
+	    var _document$defaultView = document.defaultView.getComputedStyle(parentElement),
+	        paddingBottom = _document$defaultView.paddingBottom,
+	        paddingTop = _document$defaultView.paddingTop;
 
 	    var viewportCompensation = 0;
 
@@ -203,8 +202,8 @@
 
 	  function _updateBackground() {
 	    var onComplete = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-	    var _options = options;
-	    var backgroundImage = _options.backgroundImage;
+	    var _options = options,
+	        backgroundImage = _options.backgroundImage;
 
 	    var prefetchImage = document.createElement("img");
 
