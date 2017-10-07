@@ -16,7 +16,7 @@
   "preview": {
     "handlers": [
       {
-        "options": ["textColor", "textShadowColor", "alignment", "message"],
+        "options": ["textColor", "textShadowColor", "alignment", "backgroundPosition", "message"],
         "execute": "INSTALL_SCOPE.updateInnerContent(INSTALL_OPTIONS)"
       },
       {
@@ -86,8 +86,8 @@
           "redirect"
         ],
         "enumNames": {
-            "scroll": "Scroll down the page.",
-            "redirect": "Redirect to a different site."
+            "scroll": "Scroll down the page",
+            "redirect": "Redirect to a different site"
           },
         "default": "scroll",
         "title": "When the user clicks the Hero Image...",
@@ -97,8 +97,8 @@
       },
 
       "redirectURL": {
-        "placeholder": "https://",
         "title": "Redirect URL",
+        "format": "url",
         "order": 5,
         "type": "string",
         "showIf": {"navigatorBehavior": "redirect"}
@@ -109,6 +109,7 @@
         "type": "string",
         "order": 6,
         "default": "center",
+        "format": "radios",
         "enum": [
           "left",
           "center",
@@ -118,6 +119,25 @@
           "left": "Left",
           "center": "Center",
           "right": "Right"
+        }
+      },
+
+      "backgroundPosition": {
+        "title": "Background Position",
+        "description": "Where should the image focus when the screen is too small?",
+        "type": "string",
+        "order": 7,
+        "default": "center center",
+        "format": "radios",
+        "enum": [
+          "center top",
+          "center center",
+          "center bottom"
+        ],
+        "enumNames": {
+          "center top": "Top",
+          "center center": "Center",
+          "center bottom": "Bottom"
         }
       }
     }

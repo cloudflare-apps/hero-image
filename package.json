@@ -1,8 +1,9 @@
 {
-  "name": "eager-hero-image",
+  "name": "cloudflare-app-hero-image",
   "version": "0.0.0",
-  "description": "Beautiful full screen visuals with [Eager](https://eager.io).",
+  "description": "Beautiful full screen visuals with [Cloudflare Apps](https://cloudflare.com/apps).",
   "main": "build/app.js",
+  "private": true,
   "scripts": {
     "build": "NODE_ENV=production npm run lint && rollup -c --environment NODE_ENV:production && npm run build:css",
     "build:css": "postcss --use autoprefixer -o build/app.css source/app.css",
@@ -15,7 +16,7 @@
     "type": "git",
     "url": "git+https://github.com/EagerApps/HeroImage.git"
   },
-  "author": "Eager",
+  "author": "Cloudflare Inc.",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/EagerApps/HeroImage/issues"

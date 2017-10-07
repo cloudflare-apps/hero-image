@@ -180,6 +180,8 @@
 
 	    container.setAttribute("data-alignment", options.alignment);
 
+	    container.style.backgroundPosition = options.backgroundPosition;
+
 	    container.style.color = options.textColor;
 	    container.style.textShadow = "1px 1px 3px " + TEXT_SHADOWS[options.textShadowColor];
 	    message.innerHTML = options.message.html;
